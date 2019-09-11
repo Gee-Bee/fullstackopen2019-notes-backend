@@ -34,11 +34,11 @@ app.get('/', (req, res) => {
   res.send('<h1>Hello World</h1>')
 });
 
-app.get('/notes', (req, res) => {
+app.get('/api/notes', (req, res) => {
   res.json(notes);
 });
 
-app.get('/notes/:id', (req, res) => {
+app.get('/api/notes/:id', (req, res) => {
   const id = Number(req.params.id);
   const note = notes.find(note => note.id === id);
   if (note) {
@@ -48,7 +48,7 @@ app.get('/notes/:id', (req, res) => {
   }
 });
 
-app.delete('/notes/:id', (req, res) => {
+app.delete('/api/notes/:id', (req, res) => {
   const id = Number(req.params.id);
   notes = notes.filter(note => note.id !== id);
   res.status(204).end();
@@ -56,7 +56,7 @@ app.delete('/notes/:id', (req, res) => {
 
 const generateId = () => (Math.max(...notes.map(note => note.id)) || 0) + 1;
 
-app.post('/notes', (req, res) => {
+app.post('/api/notes', (req, res) => {
   // console.log(req.get('content-Type'));
   // console.log(req.headers);
   const body = req.body;
