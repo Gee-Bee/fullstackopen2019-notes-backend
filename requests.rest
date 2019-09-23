@@ -22,5 +22,14 @@ Content-Type: application/json
   "content": "Note content",
   "important": false
 }
+### create invalid note
+
+POST {{host}}/api/notes
+Content-Type: application/json
+
+{
+  "content": "shor",
+  "important": false
+}
 
 ###
