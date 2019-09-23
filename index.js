@@ -25,7 +25,7 @@ app.get('/api/notes', (req, res) => {
     })
 });
 
-app.get('/api/notes/:id', (req, res) => {
+app.get('/api/notes/:id', (req, res, next) => {
   Note
     .findById(req.params.id)
     .then(note => {
@@ -34,7 +34,8 @@ app.get('/api/notes/:id', (req, res) => {
       } else {
         res.status(404).end();
       }
-    });
+    })
+    .catch(error => next(error));
 });
 
 app.delete('/api/notes/:id', (req, res) => {
@@ -62,6 +63,18 @@ app.post('/api/notes', (req, res) => {
     res.status(201).json(savedNote)
   })
 });
+
+const errorHandler = (error, request, response, next) => {
+  console.log(error.message);
+
+  if (error.name === 'CastError' && error.kind === 'ObjectId') {
+    return response.status(400).send({ error: 'malformed id' })
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
