@@ -1,0 +1,26 @@
+@host = http://localhost:3001
+
+### get all notes
+
+GET {{host}}/api/notes
+
+
+### get note
+
+GET {{host}}/api/notes/1
+
+###  delete note
+
+DELETE {{host}}/api/notes/1
+
+### create note
+
+POST {{host}}/api/notes
+Content-Type: application/json
+
+{
+  "content": "Note content",
+  "important": false
+}
+
+###

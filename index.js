@@ -11,27 +11,6 @@ app.use(bodyParser.json())
 const cors = require('cors');
 app.use(cors());
 
-let notes = [
-  {
-    id: 1,
-    content: "HTML is easy",
-    date: "2019-05-30T17:30:31.098Z",
-    important: true
-  },
-  {
-    id: 2,
-    content: "Browser can execute only Javascript",
-    date: "2019-05-30T18:39:34.091Z",
-    important: false
-  },
-  {
-    id: 3,
-    content: "GET and POST are the most important methods of HTTP protocol",
-    date: "2019-05-30T19:20:14.298Z",
-    important: true
-  }
-]
-
 const Note = require('./models/note');
 
 app.get('/', (req, res) => {
@@ -47,26 +26,24 @@ app.get('/api/notes', (req, res) => {
 });
 
 app.get('/api/notes/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const note = notes.find(note => note.id === id);
-  if (note) {
-    res.json(note);
-  } else {
-    res.status(404).end();
-  }
+  Note
+    .findById(req.params.id)
+    .then(note => {
+      if (note) {
+        res.json(note.toJSON());
+      } else {
+        res.status(404).end();
+      }
+    });
 });
 
 app.delete('/api/notes/:id', (req, res) => {
-  const id = Number(req.params.id);
-  notes = notes.filter(note => note.id !== id);
-  res.status(204).end();
+  Note
+    .findByIdAndDelete(req.params.id)
+    .then(() => res.status(204).end())
 });
 
-const generateId = () => (Math.max(...notes.map(note => note.id)) || 0) + 1;
-
 app.post('/api/notes', (req, res) => {
-  // console.log(req.get('content-Type'));
-  // console.log(req.headers);
   const body = req.body;
 
   if (!body.content) {
@@ -75,16 +52,15 @@ app.post('/api/notes', (req, res) => {
     })
   }
 
-  const note = {
+  const note = new Note({
     content: body.content,
     important: body.important || false,
     date: new Date(),
-    id: generateId()
-  }
+  });
 
-  notes = notes.concat(note);
-
-  res.status(201).json(note);
+  note.save().then(savedNote => {
+    res.status(201).json(savedNote)
+  })
 });
 
 const PORT = process.env.PORT || 3001;

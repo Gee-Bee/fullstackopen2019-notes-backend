@@ -1,7 +1,0 @@
-post http://localhost:3001/notes
-content-type: application/json
-
-{
-  "content": "VS Code REST client is pretty good",
-  "important": true
-}
