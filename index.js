@@ -38,10 +38,11 @@ app.get('/api/notes/:id', (req, res, next) => {
     .catch(error => next(error));
 });
 
-app.delete('/api/notes/:id', (req, res) => {
+app.delete('/api/notes/:id', (req, res, next) => {
   Note
-    .findByIdAndDelete(req.params.id)
+    .findByIdAndRemove(req.params.id)
     .then(() => res.status(204).end())
+    .catch(error => next(error))
 });
 
 app.post('/api/notes', (req, res) => {
@@ -62,6 +63,21 @@ app.post('/api/notes', (req, res) => {
   note.save().then(savedNote => {
     res.status(201).json(savedNote)
   })
+});
+
+app.put('/api/notes/:id', (req, res, next) => {
+  const body = req.body;
+
+  const note = {
+    content: body.content,
+    important: body.important,
+  };
+
+  Note.findByIdAndUpdate(req.params.id, note, { new: true })
+    .then(updatedNote => {
+      res.json(updatedNote.toJSON())
+    })
+    .catch(error => next(error));
 });
 
 const errorHandler = (error, request, response, next) => {
