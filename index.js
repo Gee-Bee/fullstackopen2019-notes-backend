@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const app = express();
 
@@ -30,12 +32,18 @@ let notes = [
   }
 ]
 
+const Note = require('./models/note');
+
 app.get('/', (req, res) => {
   res.send('<h1>Hello World</h1>')
 });
 
 app.get('/api/notes', (req, res) => {
-  res.json(notes);
+  Note
+    .find({})
+    .then(notes => {
+      res.json(notes.map(note => note.toJSON()));
+    })
 });
 
 app.get('/api/notes/:id', (req, res) => {
